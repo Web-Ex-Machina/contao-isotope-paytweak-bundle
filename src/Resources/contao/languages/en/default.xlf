@@ -1,0 +1,86 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/isotope/languages/en/default.php" source-language="en" target-language="en">
+    <body>
+      <trans-unit id="WEMPAYTWEAK.ERR.401.message">
+        <source>LIMIT EXCEEDED</source>
+        <target>LIMIT EXCEEDED</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.401.description">
+        <source>Too many links have been generated for current day.</source>
+        <target>Too many links have been generated for current day.</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.402.message">
+        <source>MISSING HEADER</source>
+        <target>MISSING HEADER</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.402.description">
+        <source>Missing or incomplete HEADER</source>
+        <target>Missing or incomplete HEADER</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.403.message">
+        <source>AUTH FAILURE</source>
+        <target>AUTH FAILURE</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.403.description">
+        <source>API authentification process failed. please, check your API authentification keys.</source>
+        <target>API authentification process failed. please, check your API authentification keys.</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.404.message">
+        <source>NOT FOUND</source>
+        <target>NOT FOUND</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.404.description">
+        <source>Endpoint or object cannot be found, check your settings</source>
+        <target>Endpoint or object cannot be found, check your settings</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.405.message">
+        <source>MISSING PARAMETER</source>
+        <target>MISSING PARAMETER</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.405.description">
+        <source>Missing mandatory parameter</source>
+        <target>Missing mandatory parameter</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.406.message">
+        <source>BAD SYNTAX</source>
+        <target>BAD SYNTAX</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.406.description">
+        <source>Malformed parameter generates an error</source>
+        <target>Malformed parameter generates an error</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.407.message">
+        <source>OPERATION FAILED</source>
+        <target>OPERATION FAILED</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.407.description">
+        <source>An error occured, please try again or check the request parameters</source>
+        <target>An error occured, please try again or check the request parameters</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.408.message">
+        <source>TIME OUT</source>
+        <target>TIME OUT</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.408.description">
+        <source>Your request is taking too long or the token has expired, connect again to the API</source>
+        <target>Your request is taking too long or the token has expired, connect again to the API</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.409.message">
+        <source>CONFLICT</source>
+        <target>CONFLICT</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.409.description">
+        <source>A parameter in the request causes a conflict, please check your request</source>
+        <target>A parameter in the request causes a conflict, please check your request</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.410.message">
+        <source>NO CREDIT</source>
+        <target>NO CREDIT</target>
+      </trans-unit>
+      <trans-unit id="WEMPAYTWEAK.ERR.410.description">
+        <source>You have no credit anymore, please, recharge your credit</source>
+        <target>You have no credit anymore, please, recharge your credit</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

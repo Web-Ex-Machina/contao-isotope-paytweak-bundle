@@ -1,0 +1,27 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/isotope/languages/en/tl_iso_payment.php" source-language="en" target-language="en">
+    <body>
+      <trans-unit id="tl_iso_payment.config_payweak_legend">
+        <source>Paytweak settings</source>
+        <target>Paytweak settings</target>
+      </trans-unit>
+
+      <trans-unit id="tl_iso_payment.paytweak_key_public.0">
+        <source>Paytweak public key</source>
+        <target>Paytweak public key</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_key_public.1">
+        <source>Enter your Paytweak public key</source>
+        <target>Enter your Paytweak public key</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_key_private.0">
+        <source>Paytweak private key</source>
+        <target>Paytweak private key</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_key_private.1">
+        <source>Enter your Paytweak private key</source>
+        <target>Enter your Paytweak private key</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
