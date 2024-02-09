@@ -1,13 +1,13 @@
 <?php
 
 $header = <<<EOF
-Contao PayTweak Monetico Bundle for Contao Open Source CMS
+Contao Isotope PayTweak Bundle for Contao Open Source CMS
 Copyright (c) 2024 Web ex Machina
 
 @category ContaoBundle
-@package  Web-Ex-Machina/contao-paytweak-monetico-bundle
+@package  Web-Ex-Machina/contao-isotope-sherlock-bundle
 @author   Web ex Machina <contact@webexmachina.fr>
-@link     https://github.com/Web-Ex-Machina/contao-paytweak-monetico-bundle/
+@link     https://github.com/Web-Ex-Machina/contao-isotope-sherlock-bundle/
 EOF;
 
 // To make it work, add "--path-mode": "intersection" in your "php_cs_fixer_additional_args"
