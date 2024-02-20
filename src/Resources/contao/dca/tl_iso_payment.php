@@ -17,7 +17,7 @@ $GLOBALS['TL_DCA']['tl_iso_payment']['palettes']['paytweak'] = '
 $GLOBALS['TL_DCA']['tl_iso_payment']['fields']['paytweak_key_public'] = [
     'exclude' => true,
     'inputType' => 'text',
-    'eval' => ['mandatory' => true, 'tl_class' => 'w50'],
+    'eval' => ['mandatory' => true, 'allowHtml' => true, 'tl_class' => 'w50'],
     'sql' => "varchar(255) NOT NULL default ''",
     'load_callback' => [
         ['plenta.encryption', 'decrypt']
@@ -30,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_iso_payment']['fields']['paytweak_key_public'] = [
 $GLOBALS['TL_DCA']['tl_iso_payment']['fields']['paytweak_key_private'] = [
     'exclude' => true,
     'inputType' => 'text',
-    'eval' => ['mandatory' => true, 'tl_class' => 'w50'],
+    'eval' => ['mandatory' => true, 'allowHtml' => true, 'tl_class' => 'w50'],
     'sql' => "varchar(255) NOT NULL default ''",
     'load_callback' => [
         ['plenta.encryption', 'decrypt']

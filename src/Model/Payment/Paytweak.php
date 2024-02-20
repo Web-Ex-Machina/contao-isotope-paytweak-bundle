@@ -38,6 +38,7 @@ class Paytweak extends Postsale implements IsotopePostsale
     protected $member;
     protected $billingAddress;
     protected $shippingAddress;
+    protected $wrapper;
     protected $strFormTemplate = 'mod_wem_iso_paytweak_payment_form';
 
     public const LOGCATEGORY = 'PAYTWEAK';
@@ -58,6 +59,40 @@ class Paytweak extends Postsale implements IsotopePostsale
         $objTemplate->order = $this->order;
         $objTemplate->member = $this->member;
         $objTemplate->amount = $this->amount;
+
+        $this->wrapper->api_connect();
+
+        $r = (array) json_decode($this->wrapper->get_message());
+        if ('OK' !== $r['code']) {
+            $objTemplate->error = true;
+            $objTemplate->message = $r['message'];
+
+            return $objTemplate->parse();
+        }
+
+        $data = [
+            'order_id' => $this->order->getUniqueId(),
+            'amount' => $this->amount,
+            'firstname' => $this->billingAddress->firstname,
+            'lastname' => $this->billingAddress->lastname,
+            'email' => $this->billingAddress->email,
+            'billing_address' => $this->getBillingAddressAsJson(),
+            'cart' => $this->getCartAsJson(),
+        ];
+
+        $this->wrapper->api_post_method("links", $data);
+        $r = (array) json_decode($this->wrapper->get_message());
+
+        if ('OK' === $r['code']) {
+            $objTemplate->url = $r['url'];
+            $objTemplate->qrcode = $r['qrcode'];
+            $objTemplate->order_id = $r['order_id'];
+        } else {
+            $objTemplate->error = true;
+            $objTemplate->message = $r['message'];
+        }
+
+        $objTemplate->response = $r;
 
         return $objTemplate->parse();
     }
@@ -88,10 +123,48 @@ class Paytweak extends Postsale implements IsotopePostsale
 
         return false;
     }
+
+    protected function getAmount()
+    {
+        return number_format(floatval($this->order->getTotal()), 2, ".", "");
+    }
+
+    protected function getBillingAddressAsJson()
+    {
+        return json_encode([
+            'address' => $this->billingAddress->street_1,
+            'additional_information' => $this->billingAddress->street_2,
+            'zip_code' => $this->billingAddress->postal,
+            'city' => $this->billingAddress->city,
+            'country' => strtoupper($this->billingAddress->country),
+        ]);
+    }
+
+    protected function getCartAsJson()
+    {
+        $arrItems = $this->order->getItems();
+
+        if (!$arrItems || empty($arrItems)) {
+            throw new Exception('Cart is empty');
+        }
+
+        $arrCart = [];
+
+        foreach($arrItems as $i) {
+            $arrCart[] = [
+                'id' => $i->sku,
+                'description' => $i->name,
+                'amount' => $i->price,
+                'quantity' => $i->quantity,
+            ];
+        }
+
+        return json_encode($arrCart);
+    }
     
     protected function getReference()
     {
-        return "REF" . $this->order->id; // Todo -> make format flexible
+        return $this->order->getDocumentNumber();
     }
 
     protected function getPostFromRequest()
@@ -112,10 +185,12 @@ class Paytweak extends Postsale implements IsotopePostsale
         $this->module = $objModule;
         $this->billingAddress = $objOrder->getRelated('billing_address_id');
         $this->shippingAddress = $objOrder->getRelated('shipping_address_id');
-        $this->amount = number_format(floatval($this->order->getTotal()), 2, ".", ""); // Todo -> extract function & make format flexible
+        $this->amount = $this->getAmount();
         $this->payment = $this->order->getRelated('payment_id');
         $this->member = $this->order->getRelated('member');
         $this->reference = $this->getReference();
+
+        $this->wrapper = $this->getWrapper();
     }
 
     private function getWrapper()
