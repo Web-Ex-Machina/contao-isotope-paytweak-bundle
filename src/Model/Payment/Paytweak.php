@@ -60,6 +60,7 @@ class Paytweak extends Postsale implements IsotopePostsale
         $objTemplate->member = $this->member;
         $objTemplate->amount = $this->amount;
 
+        $this->wrapper = $this->getWrapper();
         $this->wrapper->api_connect();
 
         $r = (array) json_decode($this->wrapper->get_message());
@@ -97,38 +98,88 @@ class Paytweak extends Postsale implements IsotopePostsale
         return $objTemplate->parse();
     }
 
+    /**
+     * Retrieve the Order with Paytweak request
+     * 
+     * @return Order
+     */
     public function getPostsaleOrder()
     {
-        $orderId = $this->getOrderIdFromRequest();
+        // Filter requests from Paytweak, we only want PAYMENT requests
+        $args = $this->getBodyFromRequest();
+        if ('PAYMENT' !== $args['notice']) {
+            return;
+        }
 
-        $this->addLog(sprintf('CGI 0 : CGI callback for order %s', $orderId));
+        // Retrieve order ID
+        $orderUniqID = $args['order_id'];
+        $this->addLog(sprintf('CGI 0: CGI callback for order %s', $orderUniqID));
 
-        if (null === $orderId) {
+        // Break if we cannot look for order
+        if (!$orderUniqID) {
+            $this->addLog('CGI Error: Order not found');
             return null;
         }
 
-        return Order::findByPk($orderId);
+        return Order::findOneByUniqid($orderUniqID);
     }
 
     /**
      * Process payment on checkout page.
      * @param   IsotopeProductCollection    The order being places
      * @param   Module                      The checkout module instance
-     * @return  mixed
+     * 
+     * @return  mixed (Response or nothing)
      */
     public function processPostsale(IsotopeProductCollection $objOrder)
     {
-        $this->getVars($objOrder, null);
-        $this->addLog('CGI 0 : Call du retour CGI');
+        try {
+            $this->addLog('CGI 0: Starting Paytweak Postsale with Order ' . $objOrder->id);
+            $this->getVars($objOrder);
+            $args = $this->getBodyFromRequest();
 
-        return false;
+            // Process payment
+            if ($this->isPaymentOk()) {
+                $this->addLog('CGI 1: Payment OK with authorization_id - ' . $args['authorisation_id'] . ' and transaction_id - ' . $args['transaction_id']);
+
+                if ($this->order->checkout()) {
+                    $this->order->setDatePaid(time());
+                    $this->order->updateOrderStatus($this->new_order_status);
+                    $this->addLog('CGI 2: Order marked as checked out with new status: ' . $this->new_order_status);
+                } else {
+                    throw new Exception('CGI Error: Something went wrong when checking out order with valid payment');
+                }
+            } else {
+                $this->addLog('CGI 1: Payment KO with status - ' . $args['status'] . ' and reason - ' . $args['reason']);
+                if (null === $this->order->getConfig()) {
+                    throw new Exception('CGI Error: Config for Order ID ' . $this->order->getId() . ' not found');
+                } elseif ($this->order->checkout()) {
+                    $this->order->updateOrderStatus($this->order->getConfig()->orderstatus_error);
+                    $this->addLog('CGI 2 : Order marked as checked out with new status: ' . $this->order->getConfig()->orderstatus_error);
+                } else {
+                    throw new Exception('CGI Error: Something went wrong when checking out order with invalid payment');
+                }
+            }
+        } catch(Exception $e) {
+            $this->addLog('CGI error: ' . $e->getMessage());
+        }
     }
 
+    /**
+     * Format & return order amount
+     * 
+     * @return double
+     */
     protected function getAmount()
     {
         return number_format(floatval($this->order->getTotal()), 2, ".", "");
     }
 
+    /**
+     * Format Billing address as Json
+     * 
+     * @return string
+     */
     protected function getBillingAddressAsJson()
     {
         return json_encode([
@@ -140,6 +191,27 @@ class Paytweak extends Postsale implements IsotopePostsale
         ]);
     }
 
+    /**
+     * Format Shipping address as Json
+     * 
+     * @return string
+     */
+    protected function getShippingAddressAsJson()
+    {
+        return json_encode([
+            'address' => $this->shippingAddress->street_1,
+            'additional_information' => $this->shippingAddress->street_2,
+            'zip_code' => $this->shippingAddress->postal,
+            'city' => $this->shippingAddress->city,
+            'country' => strtoupper($this->shippingAddress->country),
+        ]);
+    }
+
+    /**
+     * Format Order items as Json
+     * 
+     * @return string
+     */
     protected function getCartAsJson()
     {
         $arrItems = $this->order->getItems();
@@ -162,24 +234,23 @@ class Paytweak extends Postsale implements IsotopePostsale
         return json_encode($arrCart);
     }
     
+    /**
+     * Retrieve order document reference
+     * 
+     * @return string
+     */
     protected function getReference()
     {
         return $this->order->getDocumentNumber();
     }
 
-    protected function getPostFromRequest()
-    {
-        return $this->getRequest()->request->all();
-    }
-
-    protected function getOrderIdFromRequest()
-    {
-        $parameters = $this->getPostFromRequest();
-
-        return str_replace('REF', '', $parameters['reference']);
-    }
-
-    protected function getVars(IsotopeProductCollection $objOrder, Module $objModule = null)
+    /**
+     * Retrieve and format various vars from the order
+     * 
+     * @param  IsotopeProductCollection $objOrder
+     * @param  Module|null              $objModule
+     */
+    protected function getVars(IsotopeProductCollection $objOrder, Module $objModule = null): void
     {
         $this->order = $objOrder;
         $this->module = $objModule;
@@ -189,10 +260,53 @@ class Paytweak extends Postsale implements IsotopePostsale
         $this->payment = $this->order->getRelated('payment_id');
         $this->member = $this->order->getRelated('member');
         $this->reference = $this->getReference();
-
-        $this->wrapper = $this->getWrapper();
     }
 
+    /**
+     * Check if payment is valid from request
+     * 
+     * @return boolean
+     */
+    protected function isPaymentOk()
+    {
+        $args = $this->getBodyFromRequest();
+        return 5 === (int) $args['status'] || 9 === (int) $args['status'];
+    }
+
+    /**
+     * Return the Symfony Request object of the current request.
+     *
+     * @return Request
+     */
+    private function getRequest(): Request
+    {
+        return System::getContainer()->get('request_stack')->getCurrentRequest();
+    }
+
+    /**
+     * Return request body as array
+     * 
+     * @return Array
+     */
+    private function getBodyFromRequest()
+    {
+        return json_decode($this->getRequest()->getContent(), true);
+    }
+
+    /**
+     * Log system
+     */
+    private function addLog($msg): void
+    {
+        // use debug_backtrace() to retrieve the last method
+        System::log($msg, __METHOD__, self::LOGCATEGORY);
+    }
+
+    /**
+     * Retrieve Paytweak PHP Wrapper
+     * 
+     * @return Wrapper
+     */
     private function getWrapper()
     {
         // Retrieve Encyption service
@@ -203,22 +317,5 @@ class Paytweak extends Postsale implements IsotopePostsale
             $encryptionService->decrypt($this->payment->paytweak_key_public),
             $encryptionService->decrypt($this->payment->paytweak_key_private),
         );
-    }
-
-    /**
-     * Return the Symfony Request object of the current request.
-     */
-    protected function getRequest(): Request
-    {
-        return System::getContainer()->get('request_stack')->getCurrentRequest();
-    }
-
-    /**
-     * Log system
-     */
-    private function addLog($msg): void
-    {
-        // use debug_backtrace() to retrieve the last method
-        System::log($msg, __METHOD__, self::LOGCATEGORY);
     }
 }
