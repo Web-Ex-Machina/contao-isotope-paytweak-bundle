@@ -25,3 +25,11 @@ Note: This bundle filters Paytweak push requests to only deal with PAYMENT notic
 
 ### Test cards
 You can find test payment cards here: [https://docs.axepta.bnpparibas/display/DOCBNP/Cartes+de+test+-+Autorisation](https://docs.axepta.bnpparibas/display/DOCBNP/Cartes+de+test+-+Autorisation).
+
+## Possible enhancements
+* Add a setting to automaticly redirect user to payment link once the checkout form is displayed
+* Add a setting to display the QRCode, the link, or both
+* Put Paytweak vars (status) in class constants to make it easier to understand 
+
+## To discuss
+* Should we checkout the order when the payment is invalid? Because it locks the order and user should recreate the same cart to retry an order in that case. But at the same time, we have the "definitive" order number to make it easier to identify payments.
