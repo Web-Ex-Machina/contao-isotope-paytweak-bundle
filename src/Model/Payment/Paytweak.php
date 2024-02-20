@@ -147,17 +147,17 @@ class Paytweak extends Postsale implements IsotopePostsale
                     $this->order->updateOrderStatus($this->new_order_status);
                     $this->addLog('CGI 2: Order marked as checked out with new status: ' . $this->new_order_status);
                 } else {
-                    throw new Exception('CGI Error: Something went wrong when checking out order with valid payment');
+                    throw new Exception('Something went wrong when checking out order with valid payment');
                 }
             } else {
                 $this->addLog('CGI 1: Payment KO with status - ' . $args['status'] . ' and reason - ' . $args['reason']);
                 if (null === $this->order->getConfig()) {
-                    throw new Exception('CGI Error: Config for Order ID ' . $this->order->getId() . ' not found');
+                    throw new Exception('Config for Order ID ' . $this->order->getId() . ' not found');
                 } elseif ($this->order->checkout()) {
                     $this->order->updateOrderStatus($this->order->getConfig()->orderstatus_error);
                     $this->addLog('CGI 2 : Order marked as checked out with new status: ' . $this->order->getConfig()->orderstatus_error);
                 } else {
-                    throw new Exception('CGI Error: Something went wrong when checking out order with invalid payment');
+                    throw new Exception('Something went wrong when checking out order with invalid payment');
                 }
             }
         } catch(Exception $e) {
