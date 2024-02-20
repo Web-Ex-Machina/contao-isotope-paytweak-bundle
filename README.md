@@ -2,8 +2,9 @@
 This bundle adds support for payment interface Paytweak to Isotope ecommerce bundle.
 
 ## Install
-Use composer to install this bundle: 
-Or use the Contao Manager
+Use composer to install this bundle: `composer require webexmachina/contao-isotope-paytweak-bundle`
+
+Or use the Contao Manager.
 
 ## Paytweak Documentation
 Paytweak API documentation (english) can be found here: [https://api.paytweak.dev/doc/en/](https://api.paytweak.dev/doc/en/)
