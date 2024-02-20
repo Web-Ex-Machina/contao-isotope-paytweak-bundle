@@ -140,7 +140,7 @@ class Paytweak extends Postsale implements IsotopePostsale
 
             // Process payment
             if ($this->isPaymentOk()) {
-                $this->addLog('CGI 1: Payment OK with authorization_id - ' . $args['authorisation_id'] . ' and transaction_id - ' . $args['transaction_id']);
+                $this->addLog('CGI 1: Payment OK with transaction_id - ' . $args['transaction_id']);
 
                 if ($this->order->checkout()) {
                     $this->order->setDatePaid(time());
