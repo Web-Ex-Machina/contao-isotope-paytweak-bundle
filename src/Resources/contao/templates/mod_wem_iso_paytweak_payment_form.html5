@@ -1,6 +1,13 @@
 <?php if($this->error): ?>
 	<p class="error"><?= $this->message ?></p>
 <?php else: ?>
-	<a href="<?= $this->url ?>" title="Régler ma commande" class="btn">URL retournée par Paytweak</a> 
+	<p>
+		Vous allez être redirigé(e) vers l'interface de paiement.
+		<!-- <a href="<?= $this->url ?>" title="Régler ma commande" class="btn">Cliquez ici si la redirection ne se fait pas</a>  -->
+	</p>
+	<script type="text/javascript">
+		window.setTimeout(()=>{
+			window.location = '<?= $this->url ?>';
+		},5000);
+	</script>
 <?php endif; ?>
-
