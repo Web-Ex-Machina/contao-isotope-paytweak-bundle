@@ -8,7 +8,7 @@ use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\FrontendTemplate;
 use Contao\Module;
 use Contao\System;
-use ContaoIsotopePaytweakBundle\Paytweak\Wrapper;
+use ContaoIsotopePaytweakBundle\Paytweak\WrapperOverride;
 use Exception;
 use Haste\Input\Input;
 use Isotope\Interfaces\IsotopePostsale;
@@ -72,7 +72,7 @@ class Paytweak extends Postsale implements IsotopePostsale
         }
 
         $data = [
-            'order_id' => $this->order->getUniqueId(),
+            'order_id' => $this->order->getId(),
             'amount' => $this->amount,
             'firstname' => $this->billingAddress->firstname,
             'lastname' => $this->billingAddress->lastname,
@@ -80,6 +80,9 @@ class Paytweak extends Postsale implements IsotopePostsale
             'billing_address' => $this->getBillingAddressAsJson(),
             'cart' => $this->getCartAsJson(),
         ];
+        if('DEV' !== $this->payment->paytweak_mode && $this->payment->paytweak_scenario){
+            $data['scenario'] = (int) $this->payment->paytweak_scenario;
+        }
 
         $this->wrapper->api_post_method("links", $data);
         $r = (array) json_decode($this->wrapper->get_message());
@@ -112,16 +115,16 @@ class Paytweak extends Postsale implements IsotopePostsale
         }
 
         // Retrieve order ID
-        $orderUniqID = $args['order_id'];
-        $this->addLog(sprintf('CGI 0: CGI callback for order %s', $orderUniqID));
+        $orderID = $args['order_id'];
+        $this->addLog(sprintf('CGI 0: CGI callback for order %s', $orderID));
 
         // Break if we cannot look for order
-        if (!$orderUniqID) {
+        if (!$orderID) {
             $this->addLog('CGI Error: Order not found');
             return null;
         }
 
-        return Order::findOneByUniqid($orderUniqID);
+        return Order::findOneByPk($orderID);
     }
 
     /**
@@ -313,9 +316,10 @@ class Paytweak extends Postsale implements IsotopePostsale
         $encryptionService = System::getContainer()->get('plenta.encryption');
 
         // Retrieve Paytweak Wrapper
-        return new Wrapper(
-            $encryptionService->decrypt($this->payment->paytweak_key_public),
-            $encryptionService->decrypt($this->payment->paytweak_key_private),
+        return new WrapperOverride(
+            $encryptionService->decrypt('DEV' === $this->payment->paytweak_key_private ? $this->payment->paytweak_key_public_dev : $this->payment->paytweak_key_public),
+            $encryptionService->decrypt('DEV' === $this->payment->paytweak_key_private ? $this->payment->paytweak_key_private_dev : $this->payment->paytweak_key_private),
+            $this->payment->paytweak_mode
         );
     }
 }

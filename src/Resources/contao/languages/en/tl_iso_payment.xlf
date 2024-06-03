@@ -22,6 +22,14 @@
         <source>Enter your Paytweak private key</source>
         <target>Enter your Paytweak private key</target>
       </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_scenario.0">
+        <source>Paytweak scenario</source>
+        <target>Paytweak scenario</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_scenario.1">
+        <source>Enter your Paytweak scenario</source>
+        <target>Enter your Paytweak scenario</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

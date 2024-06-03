@@ -22,6 +22,42 @@
         <source>Enter your Paytweak private key</source>
         <target>Indiquez votre clé privée Paytweak</target>
       </trans-unit>
+
+
+      <trans-unit id="tl_iso_payment.paytweak_key_public_dev.0">
+        <source>Paytweak public key (dev)</source>
+        <target>Clé publique Paytweak (dev)</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_key_public_dev.1">
+        <source>Enter your Paytweak public key</source>
+        <target>Indiquez votre clé publique Paytweak (dev)</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_key_private_dev.0">
+        <source>Paytweak private key (dev)</source>
+        <target>Clé privée Paytweak (dev)</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_key_private_dev.1">
+        <source>Enter your Paytweak private key (dev)</source>
+        <target>Indiquez votre clé privée Paytweak (dev)</target>
+      </trans-unit>
+
+      <trans-unit id="tl_iso_payment.paytweak_scenario.0">
+        <source>Paytweak scenario</source>
+        <target>Scénario Paytweak</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_scenario.1">
+        <source>Enter your Paytweak scenario</source>
+        <target>Indiquez votre scénario Paytweak</target>
+      </trans-unit>
+
+      <trans-unit id="tl_iso_payment.paytweak_mode.dev">
+        <source>Development</source>
+        <target>Développement / simulation</target>
+      </trans-unit>
+      <trans-unit id="tl_iso_payment.paytweak_mode.prod">
+        <source>Production</source>
+        <target>Production</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
