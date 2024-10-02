@@ -72,7 +72,7 @@ class Paytweak extends Postsale implements IsotopePostsale
         }
 
         $data = [
-            'order_id' => $this->order->getId(),
+            'order_id' => $this->order->getId().'_'.time(),
             'amount' => $this->amount,
             'firstname' => $this->billingAddress->firstname,
             'lastname' => $this->billingAddress->lastname,
@@ -80,8 +80,11 @@ class Paytweak extends Postsale implements IsotopePostsale
             'billing_address' => $this->getBillingAddressAsJson(),
             'cart' => $this->getCartAsJson(),
         ];
+
+        $data['scenario'] = '1';
+
         if('DEV' !== $this->payment->paytweak_mode && $this->payment->paytweak_scenario){
-            $data['scenario'] = (int) $this->payment->paytweak_scenario;
+            $data['scenario'] = $this->payment->paytweak_scenario;
         }
 
         $this->wrapper->api_post_method("links", $data);
@@ -115,7 +118,7 @@ class Paytweak extends Postsale implements IsotopePostsale
         }
 
         // Retrieve order ID
-        $orderID = $args['order_id'];
+        $orderID = explode('_',$args['order_id'])[0];
         $this->addLog(sprintf('CGI 0: CGI callback for order %s', $orderID));
 
         // Break if we cannot look for order

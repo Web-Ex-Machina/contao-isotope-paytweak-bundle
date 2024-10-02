@@ -155,7 +155,7 @@ class Wrapper
 
         $query      = http_build_query($args);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
-
+        
             $result = curl_exec($ch);
 
         $this->message = array();
