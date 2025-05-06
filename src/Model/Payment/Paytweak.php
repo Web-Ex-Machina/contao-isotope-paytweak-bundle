@@ -127,7 +127,7 @@ class Paytweak extends Postsale implements IsotopePostsale
             return null;
         }
 
-        return Order::findOneByPk($orderID);
+        return Order::findByPk($orderID);
     }
 
     /**
